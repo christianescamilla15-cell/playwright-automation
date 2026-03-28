@@ -1,0 +1,7 @@
+__pycache__
+.git
+screenshots/*.png
+data/*.db
+data/*.json
+.env
+.pytest_cache
