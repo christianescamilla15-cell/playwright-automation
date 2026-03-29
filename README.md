@@ -1,180 +1,98 @@
-# Playwright Automation Suite
+# Playwright Automation
 
-![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
-![Playwright](https://img.shields.io/badge/Playwright-1.49-2EAD33?logo=playwright&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-54_passed-success)
-![License](https://img.shields.io/badge/License-MIT-blue)
+Production-grade browser automation system for scraping, scheduling, persistence, and test execution.
 
-> Production-grade browser automation with real scraping, scheduled workflows, SQLite persistence, and E2E testing.
+## Overview
+Playwright Automation is a Python-based automation suite designed for repeatable browser workflows, real scraping jobs, SQLite persistence, and E2E verification. Zero mocks — all scrapers hit real websites.
 
----
+## Problem
+Many operational web tasks are repetitive, fragile, and manually executed. Teams need reliable automation with persistence and verification.
 
-## Features
+## Solution
+This project automates browser-driven workflows through:
+- 3 real scrapers (GitHub repos, e-commerce prices, form submission)
+- Scheduled job execution with SQLite
+- CLI interface for manual runs
+- E2E test coverage for the portfolio
+- GitHub Actions CI integration
 
-- **3 Real Scrapers** — GitHub trending repos, product price monitoring, form automation
-- **SQLite Persistence** — Run history tracking, price change logs, structured data storage
-- **Scheduler** — Automated periodic execution with configurable intervals
-- **CLI Interface** — Run scrapers, view history, check prices from the terminal
-- **E2E Test Suite** — 54 tests covering portfolio site, NexusForge, AI Playground, ImpulsoIA, and mobile responsive checks
+## System Architecture
 
----
-
-## Architecture
-
-```mermaid
-graph TD
-    CLI[CLI - cli.py] --> Scheduler[Scheduler]
-    CLI --> Scrapers
-    Scheduler --> Scrapers
-
-    subgraph Scrapers
-        GH[GitHub Scraper]
-        PM[Product Monitor]
-        FA[Form Automation]
-    end
-
-    Scrapers --> Browser[Playwright Browser]
-    Scrapers --> DB[(SQLite Database)]
-    Browser --> Web[Target Websites]
-
-    subgraph Testing
-        Unit[Unit Tests - tests/]
-        E2E[E2E Tests - e2e/]
-    end
-
-    E2E --> Browser
+```text
+CLI / Scheduler
+      ↓
+Scrapers (3 real targets)
+      ↓
+Playwright Browser Engine
+      ↓
+Target Websites (GitHub, e-commerce, forms)
+      ↓
+SQLite Storage
 ```
 
----
+## Key Features
+- 3 production scrapers (zero mocks)
+- SQLite persistence layer
+- Cron-style scheduler
+- CLI interface
+- E2E test suite (54 tests)
+- GitHub Actions CI/CD
+
+## Engineering Decisions
+
+### Why zero mocks?
+To ensure scrapers work against real websites, catching real-world failures that mocked tests miss.
+
+### Why SQLite?
+Lightweight persistence for scraping results without requiring a separate database server.
+
+### Why Playwright over Selenium?
+Modern API, better auto-waiting, faster execution, built-in browser management.
 
 ## Tech Stack
+| Layer | Technology |
+|-------|-----------|
+| Language | Python 3.12 |
+| Automation | Playwright |
+| Storage | SQLite |
+| Testing | pytest, pytest-playwright |
+| CI/CD | GitHub Actions |
+| Infra | Docker |
 
-| Component       | Technology            |
-|-----------------|-----------------------|
-| Language        | Python 3.12           |
-| Browser Engine  | Playwright 1.49       |
-| Database        | SQLite                |
-| Testing         | pytest + pytest-playwright |
-| CI/CD           | GitHub Actions        |
-| Containerization| Docker                |
+## Repo Structure
+```
+scrapers/         # 3 real scraper modules
+scheduler/        # Job scheduling logic
+storage/          # SQLite persistence
+tests/            # Unit tests
+e2e/              # E2E browser tests
+utils/            # Shared utilities
+web/              # Portfolio E2E targets
+.github/workflows/ # CI pipeline
+```
 
----
+## Key Metrics
+| Metric | Value |
+|--------|-------|
+| Real Scrapers | 3 |
+| E2E Tests | 54 |
+| Mock Count | 0 (zero) |
+| Commits | 7 |
 
-## Quick Start
-
+## How to Run
 ```bash
-# Clone the repository
-git clone https://github.com/christianescamilla15-cell/playwright-automation.git
-cd playwright-automation
-
-# Install dependencies
 pip install -r requirements.txt
-playwright install chromium --with-deps
-
-# Run all scrapers
-python cli.py run all
-
-# Start the scheduler
-python cli.py schedule
+python cli.py
 ```
+
+## Why This Matters
+This repo demonstrates production-style automation engineering — not just AI demos but reliable operational systems.
+
+## Roadmap
+- [ ] Agent-triggered automation
+- [ ] Richer dashboarding
+- [ ] Retry policies
+- [ ] Multi-tenant run history
 
 ---
-
-## CLI Usage
-
-```bash
-# Run a specific scraper
-python cli.py run github
-python cli.py run products
-python cli.py run forms
-
-# Run all scrapers
-python cli.py run all
-
-# View run history
-python cli.py history
-python cli.py history --scraper github --limit 5
-
-# Check price history for a product
-python cli.py prices "Product Name"
-
-# Start automated scheduler
-python cli.py schedule
-```
-
----
-
-## Testing
-
-```bash
-# Run unit tests
-python -m pytest tests/ -v
-
-# Run E2E tests
-python -m pytest e2e/ -v
-
-# Run all tests
-python -m pytest tests/ e2e/ -v
-```
-
----
-
-## Project Structure
-
-```
-playwright-automation/
-├── cli.py                 # Command-line interface
-├── requirements.txt       # Python dependencies
-├── pytest.ini             # pytest configuration
-├── Dockerfile             # Container build
-├── .dockerignore          # Docker ignore rules
-├── .github/
-│   └── workflows/
-│       └── ci.yml         # GitHub Actions CI
-├── scrapers/
-│   ├── github_scraper.py  # GitHub trending repos scraper
-│   ├── product_monitor.py # Product price monitoring
-│   └── form_automation.py # Form fill automation
-├── storage/
-│   └── database.py        # SQLite persistence layer
-├── scheduler/
-│   └── runner.py          # Scheduled execution engine
-├── utils/
-│   ├── browser.py         # Playwright browser helpers
-│   └── retry.py           # Retry/backoff utilities
-├── tests/
-│   ├── test_github_scraper.py
-│   ├── test_product_monitor.py
-│   ├── test_form_automation.py
-│   ├── test_database.py
-│   └── test_scheduler.py
-├── e2e/
-│   ├── test_portfolio.py
-│   ├── test_nexusforge.py
-│   ├── test_ai_playground.py
-│   ├── test_impulso_ia.py
-│   └── test_mobile_responsive.py
-├── data/                  # SQLite DB and JSON output
-└── screenshots/           # Captured screenshots
-```
-
----
-
-## Docker
-
-```bash
-# Build the image
-docker build -t playwright-automation .
-
-# Run all tests in container
-docker run --rm playwright-automation
-
-# Run a specific scraper
-docker run --rm playwright-automation python cli.py run github
-```
-
----
-
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
+Built by [Christian Hernandez](https://ch65-portfolio.vercel.app) · AI Engineer
